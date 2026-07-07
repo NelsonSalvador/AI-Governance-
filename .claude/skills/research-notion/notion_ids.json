@@ -1,0 +1,35 @@
+{
+  "workspace": "Nelson Salvador's Space",
+  "hub_page": {
+    "title": "Compliant AI Adoption",
+    "id": "396f2a6a-be38-812b-9e54-f58558a2acdd",
+    "url": "https://app.notion.com/p/396f2a6abe38812b9e54f58558a2acdd"
+  },
+  "databases": {
+    "People": {
+      "data_source_id": "de9f2065-cf16-455b-81bf-fc1499f67fab",
+      "url": "https://app.notion.com/p/bc848e9c09ba4ddba8704f28f297b4b8"
+    },
+    "Organizations": {
+      "data_source_id": "16143f80-412f-439c-bfe1-797b082733b2",
+      "url": "https://app.notion.com/p/cb75bc4e857a4bc18c167ece97a93847"
+    },
+    "Meetings & Notes": {
+      "data_source_id": "3a1802a7-9bbe-4af5-88e9-f4fdcb70436a",
+      "url": "https://app.notion.com/p/5751a2bd6a594067819bcd9bcf784515"
+    },
+    "Insights": {
+      "data_source_id": "0c4ac2ef-37e8-41ad-84cd-d224387d4921",
+      "url": "https://app.notion.com/p/d9a2a7bd55084baeb523ab505b39d85e"
+    },
+    "Tasks & Follow-ups": {
+      "data_source_id": "e896632a-631b-4c07-95f5-a9dff285c1ae",
+      "url": "https://app.notion.com/p/75243f3ddfae45af8c2fbbd8f7d0d687"
+    },
+    "Regulations": {
+      "data_source_id": "da55888a-60c5-472d-aeb9-9a2b4b053db4",
+      "url": "https://app.notion.com/p/1fa97695f074484f909244435360b95c",
+      "note": "Reference knowledge base (not part of the CRM relation graph). DORA, FADP, EU AI Act, GDPR, NIS2, Swiss banking secrecy — requirements + how each is a sales hook."
+    }
+  }
+}
