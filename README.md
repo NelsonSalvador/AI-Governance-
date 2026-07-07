@@ -1,68 +1,98 @@
-# Compliant AI — last-mile MVP
+# AI Governance — Market Research & Product Discovery System
 
-A minimal, runnable skeleton of the "last-mile" layer: a governed AI assistant
-that sits on top of sovereign infrastructure. It runs out of the box with a mock
-model so you can build the pipeline before wiring up a real endpoint.
+> **This is not a product. There is no app or MVP here.** It's a *research operating system*:
+> a way to turn scattered conversations into a structured, queryable market-research base — just by
+> talking to Claude Code, which files everything into Notion for you.
 
-> 📓 **Doing customer discovery / expert interviews for this project?** See [`RESEARCH.md`](RESEARCH.md)
-> — paste a meeting note or describe a call to Claude Code and it files everything into our Notion
-> research CRM (People, Organizations, Meetings, Insights, Tasks), all linked. No manual Notion work.
+We're investigating a question, not shipping software (yet):
 
-## The idea
+> **Do regulated organisations in the EU & Switzerland — banks, insurers, universities, software
+> houses — have a real, painful, fundable problem using AI on sensitive data?**
+> (They can't put client data in public tools like ChatGPT because of DORA, the revised FADP, GDPR
+> and Swiss banking secrecy.) Before building anything, we're verifying that with real people.
 
-You don't build models or infrastructure — you build the governed layer between
-a regulated organisation's users and a sovereign model. Each module below maps to
-one part of that layer:
+This repo is the connective tissue that makes that research compound instead of scattering across
+notebooks, inboxes, and memory.
 
-| Module | Layer | What it does |
-| --- | --- | --- |
-| `app/rag.py` | RAG | Retrieval over the org's own documents, filtered by clearance |
-| `app/governance.py` | Governance | Access control, PII/client-data redaction, model routing by sensitivity |
-| `app/audit.py` | Audit & evidence | Append-only, hash-chained log — the compliance evidence (DORA / AI Act / FADP) |
-| `app/model_client.py` | Infra | Calls a sovereign model endpoint (Apertus, Mistral on-prem, Ollama...) |
-| `app/pipeline.py` | Orchestration | access → retrieve → route → redact → generate → audit |
+## What it is (and isn't)
 
-## Run it
+- ✅ A system for capturing and structuring **customer discovery + market research**.
+- ✅ A shared brain your whole team updates **just by talking to Claude Code** — paste a Granola note,
+  describe a call, and it's filed, linked, and de-duplicated.
+- ❌ **Not** a product, app, or MVP. Nothing to install or run. No source code to build.
 
-```bash
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+## The research lives in Notion
+
+Everything is captured in **six linked databases** under the **Compliant AI Adoption** page:
+
+| Database | What it holds |
+| --- | --- |
+| **People** | Everyone we talk to — prospects, buyers, champions, industry experts, advisors, investors |
+| **Organizations** | Banks, insurers, universities, software houses, regulators |
+| **Meetings & Notes** | Discovery calls, expert interviews, brainstorms — raw notes in the page body |
+| **Insights** | The distilled learnings: pains, objections, willingness-to-pay, competitor & regulatory signals |
+| **Tasks & Follow-ups** | Action items from conversations |
+| **Regulations** | Reference: DORA, FADP, EU AI Act, GDPR, NIS2, banking secrecy — and how each is a sales hook |
+
+People ↔ Organizations ↔ Meetings ↔ Insights ↔ Tasks are all cross-linked, so you can open any
+person and see every meeting, insight, and follow-up attached to them.
+
+## How it works
+
+```
+You  ──"here's my call note / I just spoke with…"──▶  Claude Code
+                                                        │  (research-notion skill)
+                                                        ▼
+                        Notion:  People · Organizations · Meetings · Insights · Tasks
+                                 (found-or-created, linked, de-duplicated)
 ```
 
-Then:
+You never touch Notion's structure by hand. You talk; Claude files.
 
-```bash
-curl -X POST localhost:8000/chat -H "Content-Type: application/json" \
-  -d '{"query": "what is the remote work policy?", "role": "advisor", "classification": "internal"}'
-```
+## Setup (one-time, ~5 minutes)
 
-Run the tests with `pytest`. Each request appends a line to `audit.jsonl`.
+1. **Install [Claude Code](https://claude.com/claude-code)** and open it in this repo folder.
+2. **Connect Notion.** In Claude Code, add the Notion connector and sign in with the Notion account
+   that can see the *Compliant AI Adoption* page.
+3. **Get access.** If you can't see that page, ask Nelson to share it (or the workspace) with your
+   Notion email.
 
-## Wire up a real model
+That's it. The skill in `.claude/skills/research-notion/` loads automatically when it's relevant.
 
-Copy `.env.example` to `.env` and set `MODEL_ENDPOINT` to any OpenAI-compatible
-`/chat/completions` URL (e.g. a local Ollama, or a sovereign-hosted Apertus/Mistral).
-Leave it blank to keep using the mock.
+## How to use it
 
-## Build plan (good tasks to hand to Claude Code)
+Just tell Claude what happened:
 
-1. **Real retrieval** — replace keyword overlap in `rag.py` with embeddings + a
-   vector DB (pgvector or Qdrant) running in your own environment. Keep the
-   clearance filter.
-2. **Real redaction** — swap the regexes in `governance.py` for a PII/NER model
-   and add your client-identifier formats.
-3. **A redacting external tier** — implement the `"external"` branch in `route()`
-   so low-sensitivity traffic can use a stronger model behind redaction.
-4. **Auth** — put real SSO / RBAC in front of `/chat` and derive `role` from the
-   token instead of trusting the request body.
-5. **A compliance-pack export** — turn `audit.jsonl` into the report format an
-   auditor actually wants (per-user activity, retention, model tiers used).
-6. **A minimal chat UI** — the assistant surface your users actually see.
+> **Paste raw notes:** "File this Granola note: *[paste]*"
 
-## Where this specialises per segment
+> **Describe a call:** "I spoke with a Head of IT Risk at a mid-size cantonal bank in Zurich. Public
+> ChatGPT is banned, they want AI over internal policies but client data can't leave the country. She
+> loved the audit-trail idea. Follow up: send the one-pager."
 
-The core is segment-agnostic; the emphasis shifts with your wedge:
-- **Small / mid banks** → the audit layer and banking-secrecy-grade routing.
-- **Universities** → cheap turnkey deployment and unpublished-research protection.
-- **Software houses** → expose this as a clean embeddable SDK, not an app.
+> **Add a contact:** "Add Marc, a compliance consultant for Swiss banks, as an industry expert."
+
+> **Log a standalone insight:** "Learned that universities won't pay per-seat — they buy at the
+> institution level."
+
+Claude finds-or-creates the People and Organizations (checking for duplicates), creates the Meeting
+with your notes, extracts and tags the Insights, creates any Tasks, links it all together, and replies
+with the Notion links — flagging anything it guessed so you can correct it.
+
+## Good habits
+
+- **Dump first, tidy later.** Even a messy paste is worth filing.
+- **Say who + where** if you can (name, org, segment) — it helps Claude link things and avoid dupes.
+- **Review the Insights** — they're the real asset. Correct the confidence levels: one conversation is
+  a *hypothesis*, not a validated fact.
+- The `🧪 Example —` records show how a filed conversation looks. Delete them once you're comfortable.
+
+## What's in this repo
+
+- **[`.claude/skills/research-notion/SKILL.md`](.claude/skills/research-notion/SKILL.md)** — the
+  instructions Claude Code follows to file research into Notion.
+- **[`.claude/skills/research-notion/notion_ids.json`](.claude/skills/research-notion/notion_ids.json)** —
+  the Notion database IDs the skill writes to.
+- **`README.md`** — this file.
+
+No API keys live in this repo; it talks to Notion through the Notion MCP connector you authorise in
+Claude Code.

@@ -1,5 +1,9 @@
-__pycache__/
-*.pyc
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local env / secrets (never commit)
 .env
-audit.jsonl
-.venv/
+*.local
