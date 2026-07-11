@@ -30,6 +30,11 @@
       "data_source_id": "da55888a-60c5-472d-aeb9-9a2b4b053db4",
       "url": "https://app.notion.com/p/1fa97695f074484f909244435360b95c",
       "note": "Reference knowledge base (not part of the CRM relation graph). DORA, FADP, EU AI Act, GDPR, NIS2, Swiss banking secrecy — requirements + how each is a sales hook."
+    },
+    "Market Analysis": {
+      "data_source_id": "0f8dda5c-1eb0-49e6-bc9c-797b56786a11",
+      "url": "https://app.notion.com/p/ac5c294133694aceaf3dcb827980e4b2",
+      "note": "Company / competitor map. Used by the market-analysis skill. Funding, size, business model, regulation-dependence, relevance to us."
     }
   }
 }

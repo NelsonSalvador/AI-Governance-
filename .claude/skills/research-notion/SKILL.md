@@ -72,8 +72,15 @@ set via `date:Date:start`), `Type` (select: `Discovery call`, `Expert interview`
 `Brainstorm`, `Internal`, `Follow-up`), `Source` (select: `Granola`, `Manual note`, `Call`, `Email`,
 `Other`), `Owner` (person — the teammate who ran it; usually leave empty unless known), `Summary`
 (text — a 1–3 sentence recap), `Sentiment` (select: `Positive`, `Neutral`, `Negative`, `Mixed`),
-`Attendees` (relation → People), `Organization` (relation → Organizations). **Put the full raw note
+`Attendees` (relation → People), `Organization` (relation → Organizations), `Granola / recording link`
+(url — store the Granola share link / recording URL here for easy access). **Put the full raw note
 in the page body**, not in a property.
+
+**Granola handling:** when the user pastes a Granola share link, put it in `Granola / recording link`,
+set `Source = Granola`, and try to fetch the link (WebFetch) to pull the summary + transcript into the
+page body. If the link isn't publicly fetchable, ask for the note text but still store the link. If
+Granola is syncing notes into a Notion inbox database, read new inbox pages, parse them into the CRM
+(People / Orgs / Insights / Tasks), copy the Granola link across, and mark the inbox item processed.
 
 **Insights** — `Name` (title — the learning stated as one crisp sentence), `Category` (select: `Pain`,
 `Objection`, `Feature request`, `Willingness to pay`, `Buying process`, `Regulatory`, `Competitor`,
