@@ -259,6 +259,132 @@
   </div>
 </footer>
 
+<!-- ===== Lead modal (self-contained) ===== -->
+<style>
+  .nx-overlay{ position:fixed; inset:0; background:rgba(10,12,11,.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:60; }
+  .nx-overlay[hidden]{ display:none; }
+  .nx-panel{ background:var(--paper); color:var(--ink); border:1px solid var(--hair); border-radius:3px; width:100%; max-width:480px; padding:30px 28px; box-shadow:0 30px 80px -30px rgba(0,0,0,.5); }
+  .nx-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:6px; }
+  .nx-title{ font-size:21px; font-weight:700; letter-spacing:-.01em; }
+  .nx-x{ background:none; border:none; cursor:pointer; color:var(--muted); font-size:22px; line-height:1; padding:2px 6px; }
+  .nx-x:hover{ color:var(--ink); }
+  .nx-sub{ font-size:13px; color:var(--muted); margin-bottom:18px; }
+  .nx-field{ margin-bottom:14px; }
+  .nx-label{ display:block; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .nx-input, .nx-ta{ width:100%; padding:11px 12px; border:1px solid var(--hair); border-radius:2px; background:transparent; color:inherit; font:inherit; font-size:15px; }
+  .nx-input:focus, .nx-ta:focus{ outline:2px solid var(--accent); outline-offset:1px; border-color:transparent; }
+  .nx-ta{ min-height:88px; resize:vertical; }
+  .nx-submit{ width:100%; margin-top:6px; border:none; cursor:pointer; }
+  .nx-note{ font-size:12px; color:var(--muted); margin-top:12px; }
+  .nx-ok{ text-align:left; padding:8px 0; }
+  .nx-ok h4{ font-size:19px; margin-bottom:8px; }
+  .nx-ok p{ font-size:14.5px; color:var(--muted); }
+  .nx-fb a{ color:var(--accent); font-weight:500; }
+  .nx-copy{ margin-top:10px; font-size:13px; border:1px solid var(--hair); border-radius:2px; padding:9px 14px; background:transparent; color:inherit; cursor:pointer; }
+  .nx-copy:hover{ border-color:var(--ink); }
+</style>
+<div class="nx-overlay" id="nxOverlay" role="dialog" aria-modal="true" aria-labelledby="nxTitle" hidden>
+  <div class="nx-panel">
+    <div id="nxFormWrap">
+      <div class="nx-head"><div class="nx-title" id="nxTitle">Get in touch</div><button class="nx-x" id="nxClose" aria-label="Close">×</button></div>
+      <p class="nx-sub">We reply within one business day.</p>
+      <form id="nxForm" novalidate>
+        <div class="nx-field"><label class="nx-label" for="nxName">Name</label><input class="nx-input" id="nxName" name="name" autocomplete="name" required></div>
+        <div class="nx-field"><label class="nx-label" for="nxEmail">Work email</label><input class="nx-input" id="nxEmail" name="email" type="email" autocomplete="email" required></div>
+        <div class="nx-field"><label class="nx-label" for="nxCompany">Company</label><input class="nx-input" id="nxCompany" name="company" autocomplete="organization"></div>
+        <div class="nx-field"><label class="nx-label" for="nxMsg" id="nxMsgLabel">Message</label><textarea class="nx-ta" id="nxMsg" name="message"></textarea></div>
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <button type="submit" class="btn btn-primary nx-submit" id="nxSend">Send</button>
+        <p class="nx-note">Or email us directly: <a href="mailto:nelson@sffstudio.com">nelson@sffstudio.com</a></p>
+      </form>
+    </div>
+    <div id="nxDone" class="nx-ok" hidden>
+      <div class="nx-head"><h4>Sent — thank you.</h4><button class="nx-x" id="nxClose2" aria-label="Close">×</button></div>
+      <p>We'll get back to you within one business day.</p>
+    </div>
+    <div id="nxFallback" class="nx-ok nx-fb" hidden>
+      <div class="nx-head"><h4>Almost there</h4><button class="nx-x" id="nxClose3" aria-label="Close">×</button></div>
+      <p>The form couldn't reach our server from this network. Your message is ready — send it by email instead:</p>
+      <p style="margin-top:10px"><a id="nxMailto" href="mailto:nelson@sffstudio.com">Open in your email app →</a></p>
+      <button class="nx-copy" id="nxCopy">Copy message + address</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var ENDPOINT = "https://formsubmit.co/ajax/nelson@sffstudio.com"; // no-account form relay; first submission emails Nelson a one-time activation link
+  var CALENDLY = ""; // optional: paste a Calendly URL to send 'call' clicks straight there
+  var FORMS = {
+    sprint:{ title:"Start the 1-week Evidence Sprint", subject:"AI Evidence Sprint", label:"Tell us about your AI product", msg:"What our AI product does: \nStuck in a security review right now? " },
+    pack:{ title:"Get the sample evidence pack", subject:"Sample evidence pack request", label:"Anything specific you want it to show?", msg:"Please send me the sample evidence pack." },
+    call:{ title:"Book a 20-minute call", subject:"20-minute intro call", label:"Suggest 2–3 time slots (CET)", msg:"Times that suit me: " },
+    partner:{ title:"Apply as a design partner", subject:"Design partner application", label:"Tell us about your firm", msg:"Company: \nAI in use today: " }
+  };
+  var overlay = document.getElementById('nxOverlay');
+  var current = FORMS.pack;
+  function typeFromHref(href){
+    var h = decodeURIComponent(href || '').toLowerCase();
+    if (h.indexOf('sprint') > -1) return 'sprint';
+    if (h.indexOf('design partner') > -1 || h.indexOf('design%20partner') > -1) return 'partner';
+    if (h.indexOf('sample') > -1 || h.indexOf('evidence pack') > -1) return 'pack';
+    if (h.indexOf('call') > -1) return 'call';
+    return null;
+  }
+  function openModal(type){
+    current = FORMS[type];
+    document.getElementById('nxTitle').textContent = current.title;
+    document.getElementById('nxMsgLabel').textContent = current.label;
+    document.getElementById('nxMsg').value = current.msg;
+    document.getElementById('nxFormWrap').hidden = false;
+    document.getElementById('nxDone').hidden = true;
+    document.getElementById('nxFallback').hidden = true;
+    overlay.hidden = false;
+    document.getElementById('nxName').focus();
+  }
+  function closeModal(){ overlay.hidden = true; }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a[href^="mailto:"]');
+    if (!a) return;
+    var t = typeFromHref(a.getAttribute('href'));
+    if (!t) return; // plain email links keep default behaviour
+    if (t === 'call' && CALENDLY){ e.preventDefault(); window.open(CALENDLY, '_blank'); return; }
+    e.preventDefault(); openModal(t);
+  });
+  ['nxClose','nxClose2','nxClose3'].forEach(function(id){ document.getElementById(id).addEventListener('click', closeModal); });
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !overlay.hidden) closeModal(); });
+  function fallback(payload){
+    var body = payload.message + "\n\nName: " + payload.name + "\nCompany: " + (payload.company||'-') + "\nEmail: " + payload.email;
+    var mail = "mailto:nelson@sffstudio.com?subject=" + encodeURIComponent(payload._subject) + "&body=" + encodeURIComponent(body);
+    document.getElementById('nxMailto').setAttribute('href', mail);
+    var copyBtn = document.getElementById('nxCopy');
+    copyBtn.onclick = function(){
+      var txt = "To: nelson@sffstudio.com\nSubject: " + payload._subject + "\n\n" + body;
+      if (navigator.clipboard){ navigator.clipboard.writeText(txt); copyBtn.textContent = "Copied ✓"; }
+    };
+    document.getElementById('nxFormWrap').hidden = true;
+    document.getElementById('nxFallback').hidden = false;
+  }
+  document.getElementById('nxForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('nxName').value.trim();
+    var email = document.getElementById('nxEmail').value.trim();
+    var company = document.getElementById('nxCompany').value.trim();
+    var msg = document.getElementById('nxMsg').value.trim();
+    if (!name || !/.+@.+\..+/.test(email)){ document.getElementById(!name?'nxName':'nxEmail').focus(); return; }
+    var payload = { name:name, email:email, company:company, message:msg,
+      _subject: current.subject + " — " + (company || name), _template:"table", _captcha:"false" };
+    var btn = document.getElementById('nxSend'); btn.textContent = "Sending…"; btn.disabled = true;
+    var ctl = new AbortController(); var timer = setTimeout(function(){ ctl.abort(); }, 8000);
+    fetch(ENDPOINT, { method:"POST", headers:{ "Content-Type":"application/json", "Accept":"application/json" }, body: JSON.stringify(payload), signal: ctl.signal })
+      .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(){ clearTimeout(timer); document.getElementById('nxFormWrap').hidden = true; document.getElementById('nxDone').hidden = false; })
+      .catch(function(){ clearTimeout(timer); fallback(payload); })
+      .finally(function(){ btn.textContent = "Send"; btn.disabled = false; });
+  });
+})();
+</script>
+
 <script>
   // Ambient "still recording" effect — appends deterministic entries every few seconds.
   (function(){
