@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nachweis — Pass enterprise AI security reviews</title>
+<meta name="description" content="Procurement-ready AI evidence in one week. A tamper-evident recorder for your AI product — the runtime evidence ISO 42001 auditors and enterprise buyers ask for.">
+<style>
+  :root{
+    --paper:#F7F7F4; --ink:#141715; --muted:#575D59; --hair:#DCDED7;
+    --accent:#D42B1E; --accent-ink:#FFFFFF;
+    --panel:#101312; --panel-ink:#E9EBE4; --panel-muted:#8B928B; --panel-hair:#262B27;
+    --ok:#2E7D4F;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --paper:#101211; --ink:#ECEDE8; --muted:#9BA19B; --hair:#2A2D2A;
+      --accent:#FF5348; --accent-ink:#141715;
+      --panel:#0A0C0B; --panel-ink:#E9EBE4; --panel-muted:#7E857E; --panel-hair:#22261F; --ok:#5BBD85; }
+  }
+  :root[data-theme="dark"]{ --paper:#101211; --ink:#ECEDE8; --muted:#9BA19B; --hair:#2A2D2A;
+    --accent:#FF5348; --accent-ink:#141715;
+    --panel:#0A0C0B; --panel-ink:#E9EBE4; --panel-muted:#7E857E; --panel-hair:#22261F; --ok:#5BBD85; }
+  :root[data-theme="light"]{ --paper:#F7F7F4; --ink:#141715; --muted:#575D59; --hair:#DCDED7;
+    --accent:#D42B1E; --accent-ink:#FFFFFF;
+    --panel:#101312; --panel-ink:#E9EBE4; --panel-muted:#8B928B; --panel-hair:#262B27; --ok:#2E7D4F; }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--paper); color:var(--ink);
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  .mono{ font-family:ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 24px; }
+  a{ color:inherit; }
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  header{ border-bottom:1px solid var(--hair); }
+  .nav{ display:flex; align-items:center; justify-content:space-between; padding:20px 0; }
+  .wordmark{ font-weight:700; letter-spacing:.14em; font-size:15px; text-decoration:none; }
+  .wordmark .dot{ color:var(--accent); }
+  .nav-right{ display:flex; align-items:center; gap:20px; }
+  .nav-alt{ font-size:13px; color:var(--muted); text-decoration:none; }
+  .nav-alt:hover{ color:var(--ink); }
+  .nav-cta{ font-size:13px; letter-spacing:.06em; text-transform:uppercase; text-decoration:none;
+    border:1px solid var(--ink); padding:9px 16px; border-radius:2px; }
+  .nav-cta:hover{ background:var(--ink); color:var(--paper); }
+
+  .hero{ display:grid; grid-template-columns:1.02fr .98fr; gap:56px; align-items:center; padding:88px 0 96px; }
+  .eyebrow{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:22px; }
+  .eyebrow b{ color:var(--accent); font-weight:700; }
+  h1{ font-size:clamp(40px, 5.4vw, 66px); line-height:1.03; letter-spacing:-.015em; font-weight:700; text-wrap:balance; }
+  .lede{ margin-top:22px; font-size:19px; line-height:1.6; color:var(--muted); max-width:34em; }
+  .lede strong{ color:var(--ink); font-weight:500; }
+  .ctas{ display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; }
+  .btn{ display:inline-block; text-decoration:none; font-size:15px; font-weight:500; padding:14px 24px; border-radius:2px; }
+  .btn-primary{ background:var(--accent); color:var(--accent-ink); }
+  .btn-primary:hover{ filter:brightness(.92); }
+  .btn-ghost{ border:1px solid var(--hair); }
+  .btn-ghost:hover{ border-color:var(--ink); }
+  .micro{ margin-top:16px; font-size:13px; color:var(--muted); }
+
+  .recorder{ background:var(--panel); color:var(--panel-ink); border-radius:4px; overflow:hidden;
+    box-shadow:0 24px 60px -30px rgba(0,0,0,.45); }
+  .rec-bar{ display:flex; justify-content:space-between; align-items:center; gap:12px;
+    padding:12px 18px; border-bottom:1px solid var(--panel-hair); font-size:12px; color:var(--panel-muted); }
+  .rec-live{ display:flex; align-items:center; gap:8px; }
+  .rec-live i{ width:8px; height:8px; border-radius:50%; background:var(--accent); animation:pulse 2s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.35} }
+  .log{ list-style:none; padding:16px 18px 20px; font-size:12.5px; line-height:1.9; overflow-x:auto; white-space:nowrap; }
+  .log li{ opacity:0; animation:enter .5s forwards; }
+  .log li:nth-child(1){animation-delay:.15s} .log li:nth-child(2){animation-delay:.55s}
+  .log li:nth-child(3){animation-delay:.95s} .log li:nth-child(4){animation-delay:1.35s}
+  .log li:nth-child(5){animation-delay:1.75s} .log li:nth-child(6){animation-delay:2.15s}
+  @keyframes enter{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none} }
+  .t{ color:var(--panel-muted); font-variant-numeric:tabular-nums; }
+  .h{ color:var(--accent); }
+  .k{ color:var(--panel-muted); }
+  .ok{ color:var(--ok); }
+  @media (prefers-reduced-motion: reduce){ .log li{ animation:none; opacity:1; } .rec-live i{ animation:none; } }
+
+  section{ border-top:1px solid var(--hair); padding:84px 0; }
+  .label{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:36px; }
+  .label::before{ content:""; display:inline-block; width:26px; height:1px; background:var(--accent); vertical-align:middle; margin-right:12px; }
+  h2{ font-size:clamp(26px, 3vw, 38px); line-height:1.12; letter-spacing:-.01em; font-weight:700; text-wrap:balance; max-width:22em; }
+
+  .facts{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--hair); border:1px solid var(--hair); margin-top:44px; }
+  .fact{ background:var(--paper); padding:28px 26px; }
+  .fact .n{ font-size:30px; font-weight:700; letter-spacing:-.01em; }
+  .fact .n em{ font-style:normal; color:var(--accent); }
+  .fact p{ margin-top:10px; font-size:14px; color:var(--muted); line-height:1.55; }
+
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:40px; margin-top:48px; }
+  .step .no{ font-size:12px; color:var(--accent); letter-spacing:.12em; }
+  .step h3{ font-size:20px; margin:12px 0 10px; font-weight:700; }
+  .step p{ font-size:15px; color:var(--muted); }
+
+  .pack{ display:grid; grid-template-columns:.9fr 1.1fr; gap:56px; align-items:start; }
+  .pack ul{ list-style:none; margin-top:8px; }
+  .pack li{ padding:16px 0; border-bottom:1px solid var(--hair); display:flex; gap:14px; align-items:baseline; font-size:16px; }
+  .pack li:first-child{ border-top:1px solid var(--hair); }
+  .pack li .tick{ color:var(--accent); font-weight:700; }
+  .pack li span{ color:var(--muted); font-size:14px; }
+
+  .buyers{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--hair); border:1px solid var(--hair); margin-top:44px; }
+  .buyer{ background:var(--paper); padding:28px 26px; }
+  .buyer .role{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+  .buyer h3{ font-size:18px; margin:10px 0 8px; }
+  .buyer p{ font-size:14px; color:var(--muted); }
+
+  footer{ border-top:1px solid var(--hair); padding:36px 0 60px; font-size:13px; color:var(--muted); }
+
+  @media (max-width: 920px){
+    .hero{ grid-template-columns:1fr; padding:64px 0 72px; gap:40px; }
+    .facts,.steps,.buyers{ grid-template-columns:1fr; }
+    .pack{ grid-template-columns:1fr; gap:36px; }
+    section{ padding:64px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="wordmark" href="startups.html">NACHWEIS<span class="dot">.</span></a>
+    <div class="nav-right">
+      <a class="nav-alt" href="index.html">For financial institutions →</a>
+      <!-- Swap href for your Calendly link -->
+      <a class="nav-cta" href="mailto:nelson@sffstudio.com?subject=Nachweis%20—%2020%20min%20call">Book a call</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <div>
+      <p class="eyebrow"><b>For AI products selling into the EU</b> · Evidence, not promises</p>
+      <h1>Enterprise deals stalling on AI security questions?</h1>
+      <p class="lede">Their security review asks how your AI handles data, what it logs, and whether you can prove it. <strong>Nachweis records everything your AI does in a tamper-evident log</strong> and hands you the evidence pack — <strong>mapped to ISO&nbsp;42001 and the EU AI Act</strong> — in one week.</p>
+      <div class="ctas">
+        <!-- Swap href for a Tally/Formspree form when ready -->
+        <a class="btn btn-primary" href="mailto:nelson@sffstudio.com?subject=AI%20Evidence%20Sprint&body=Company%3A%0AWhat%20your%20AI%20product%20does%3A%0ADeal%20currently%20stuck%3F%20(yes%2Fno)%3A%0A">Start the 1-week Evidence Sprint</a>
+        <a class="btn btn-ghost" href="mailto:nelson@sffstudio.com?subject=Nachweis%20—%20sample%20evidence%20pack">See a sample evidence pack</a>
+      </div>
+      <p class="micro">Fixed price. Free for the first <strong>two design partners</strong>.</p>
+    </div>
+
+    <div class="recorder mono" aria-label="Example of a tamper-evident AI audit log">
+      <div class="rec-bar">
+        <span>audit.log — SHA-256 chained</span>
+        <span class="rec-live"><i></i>recording</span>
+      </div>
+      <ul class="log" id="log">
+        <li><span class="t">14:02:11</span>  PROMPT recorded <span class="k">· tenant=acme-prod · policy=v1.4</span> <span class="h">#8c2e…41d7</span></li>
+        <li><span class="t">14:02:11</span>  PII redacted <span class="k">· 3 identifiers masked before model call</span> <span class="h">#1af9…c208</span></li>
+        <li><span class="t">14:02:12</span>  ROUTED <span class="k">· model=mistral-large · region=EU</span> <span class="h">#d47b…9e12</span></li>
+        <li><span class="t">14:02:14</span>  RESPONSE recorded <span class="k">· AI disclosure shown (Art. 50)</span> <span class="h">#33e0…7bc4</span></li>
+        <li><span class="t">14:02:14</span>  <span class="ok">CHAIN VERIFIED</span> <span class="k">· 8,914 entries · no gaps · no edits</span></li>
+        <li><span class="t">14:02:15</span>  EVIDENCE PACK ready <span class="k">· ISO/IEC 42001 · EU AI Act · buyer questionnaire</span> <span class="h">#b6a1…f30d</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <p class="label">Why now</p>
+      <h2>Your buyers' procurement teams started asking AI questions. Most vendors can't answer them.</h2>
+      <div class="facts">
+        <div class="fact"><div class="n">70<em>%</em></div><p>of companies have unmanaged "shadow AI" in use — so enterprise buyers now put AI governance questions in every vendor review. (Vanta, 2026)</p></div>
+        <div class="fact"><div class="n">350<em>+</em></div><p>organisations already certified against ISO/IEC 42001 — AWS, Microsoft and Anthropic among the first. It's becoming the AI question on the questionnaire.</p></div>
+        <div class="fact"><div class="n">2<em> Aug </em>2026</div><p>EU AI Act Art. 50: customer-facing AI must disclose itself — and your EU customers will ask you to prove yours does.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="label">How it works</p>
+      <h2>Change one base URL. Get evidence forever.</h2>
+      <div class="steps">
+        <div class="step"><p class="no mono">01 — CONNECT</p><h3>Drop-in proxy</h3><p>Point your LLM calls at our OpenAI-compatible endpoint — EU-hosted or inside your own infrastructure. One config change; any model.</p></div>
+        <div class="step"><p class="no mono">02 — RECORD</p><h3>Everything on the record</h3><p>Every prompt, response, redaction and disclosure written to a hash-chained log that nobody can silently edit — not you, not us. That's what makes it evidence.</p></div>
+        <div class="step"><p class="no mono">03 — PASS</p><h3>Answer the questionnaire with proof</h3><p>One click: an evidence pack mapped to ISO/IEC 42001 controls and EU AI Act obligations — built for security reviews, DPAs and audit prep.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap pack">
+      <div>
+        <p class="label">The sprint — 1 week, fixed price</p>
+        <h2>Walk into the next security review with receipts.</h2>
+        <p class="lede" style="margin-top:18px">Your compliance platform proves your <em>company</em> is safe. We prove your <strong>AI</strong> is — the runtime evidence it can't see from outside the request path.</p>
+      </div>
+      <ul>
+        <li><span class="tick">—</span><div><strong>AI inventory & risk classification</strong> <span>— every model and AI feature in your product, risk-mapped</span></div></li>
+        <li><span class="tick">—</span><div><strong>Tamper-evident runtime log</strong> <span>— what your AI actually did, SHA-256-chained, per interaction</span></div></li>
+        <li><span class="tick">—</span><div><strong>ISO/IEC 42001 control mapping</strong> <span>— audit-ready evidence for the certification your buyers are starting to demand</span></div></li>
+        <li><span class="tick">—</span><div><strong>EU AI Act readiness report</strong> <span>— Art. 50 disclosure records, literacy attestation, gap list with fixes</span></div></li>
+        <li><span class="tick">—</span><div><strong>Questionnaire-ready answers</strong> <span>— the AI section of your next security review, pre-written and evidenced</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="label">Built for the deal team</p>
+      <h2>When procurement asks, the answer is already exported.</h2>
+      <div class="buyers">
+        <div class="buyer"><p class="role">Founder / CEO</p><h3>Unblock the pipeline</h3><p>Stop watching deals rot in legal review. Answer the AI questions in days, with evidence — not a promise to "look into it."</p></div>
+        <div class="buyer"><p class="role">CTO</p><h3>One config change</h3><p>OpenAI-compatible proxy, EU-hosted or in your VPC. No rewrite, no vendor lock-in — swap models any time, keep the record.</p></div>
+        <div class="buyer"><p class="role">Compliance lead</p><h3>Evidence, not spreadsheets</h3><p>A living log your auditor can verify beats screenshots assembled the night before the review.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="label">Start this week</p>
+      <h2>One week. Fixed price. Free for the first two design partners.</h2>
+      <p class="lede">We run the sprint on your real product: inventory, recorder, evidence pack, questionnaire answers. If it doesn't shorten your next security review, don't convert to the subscription.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="mailto:nelson@sffstudio.com?subject=AI%20Evidence%20Sprint&body=Company%3A%0AWhat%20your%20AI%20product%20does%3A%0ADeal%20currently%20stuck%3F%20(yes%2Fno)%3A%0A">Start the Evidence Sprint</a>
+        <a class="btn btn-ghost" href="mailto:nelson@sffstudio.com?subject=Nachweis%20—%2020%20min%20call">Book a 20-minute call</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+    <span>NACHWEIS<span style="color:var(--accent)">.</span> — Zürich, Switzerland</span>
+    <a class="nav-alt" href="index.html">Selling to banks? See Nachweis for financial institutions →</a>
+    <a href="mailto:nelson@sffstudio.com">nelson@sffstudio.com</a>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var log = document.getElementById('log');
+    if (!log) return;
+    var extra = [
+      '<span class="t">14:02:18</span>  PROMPT recorded <span class="k">· tenant=acme-prod · policy=v1.4</span> <span class="h">#5e77…20cb</span>',
+      '<span class="t">14:02:19</span>  GUARDRAIL applied <span class="k">· output filter=v1.4 · passed</span> <span class="h">#eab3…6f01</span>',
+      '<span class="t">14:02:21</span>  RESPONSE recorded <span class="k">· model=mistral-large · region=EU</span> <span class="h">#90cd…1a58</span>',
+      '<span class="t">14:02:21</span>  <span class="ok">CHAIN VERIFIED</span> <span class="k">· 8,918 entries · no gaps · no edits</span>'
+    ];
+    var i = 0;
+    setInterval(function(){
+      if (i >= extra.length) return;
+      var li = document.createElement('li');
+      li.innerHTML = extra[i++];
+      li.style.animationDelay = '0s';
+      log.appendChild(li);
+      if (log.children.length > 8) log.removeChild(log.children[0]);
+    }, 3500);
+  })();
+</script>
+
+</body>
+</html>
